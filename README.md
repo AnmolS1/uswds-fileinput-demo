@@ -1,27 +1,66 @@
-# Fileinput
+# USWDS File Input Asynchronous Loading Solution
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.0.7.
+## problem
+Incorrect styling of USWDS components due to asynchronous loading occurring when using the Angular router.
 
-## Development server
+![incorrectly styled file input component before refresh](/images/problem-before-refresh.png "incorrectly styled file input component before refresh")
+***incorrectly styled file input component before refresh***
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+![correctly styled file input component after refresh](/images/problem-after-refresh.png "incorrectly styled file input component after refresh")
+***correctly styled file input component after refresh***
 
-## Code scaffolding
+## solution
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+First, detect whether the route was accessed manually or through the Angular router. Then, import the component and initialize in the `OnInit` lifecycle event. Finally, ensure to only initialize the component manually if the route was accessed through the angular router.
 
-## Build
+If the component is loaded regardless of direct or indirect route access it will be loaded twice on direct access, once manually and once again when USWDS's JS modifies the static HTML automatically.
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+```javascript
+// app.component.ts
+import { Component, OnDestroy } from '@angular/core';
+import { NavigationStart, Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 
-## Running unit tests
+export let browserRefresh = false;
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+...
+export class AppComponent implements OnDestroy {
+	subscription: Subscription;
+	
+	constructor(private router: Router) {
+		this.subscription = router.events.subscribe((event) => {
+			if (event instanceof NavigationStart) {
+				// check if route was accessed directly or through router
+				browserRefresh = !router.navigated;
+			}
+		});
+	}
+	
+	ngOnDestroy() {
+		this.subscription.unsubscribe();
+	}
+}
+```
 
-## Running end-to-end tests
+```typescript
+// fileinput.component.ts
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { browserRefresh } from '../app.component';
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+//@ts-ignore
+import fileinput from '@uswds/uswds/js/usa-file-input';
 
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+...
+export class FileInputComponent implements OnInit, OnDestroy {
+	ngOnInit(): void {
+		// if route was not accessed directly, we have to switch it on manually
+		if (!browserRefresh) {
+			fileinput.on();
+		}
+	}
+	
+	ngOnDestroy(): void {
+		fileinput.off();
+	}
+}
+```
