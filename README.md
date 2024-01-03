@@ -4,9 +4,11 @@
 Incorrect styling of USWDS components due to asynchronous loading occurring when using the Angular router.
 
 ![incorrectly styled file input component before refresh](/images/problem-before-refresh.png "incorrectly styled file input component before refresh")
+
 ***incorrectly styled file input component before refresh***
 
 ![correctly styled file input component after refresh](/images/problem-after-refresh.png "incorrectly styled file input component after refresh")
+
 ***correctly styled file input component after refresh***
 
 ## solution
@@ -42,7 +44,7 @@ export class AppComponent implements OnDestroy {
 }
 ```
 
-```typescript
+```javascript
 // fileinput.component.ts
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { browserRefresh } from '../app.component';
