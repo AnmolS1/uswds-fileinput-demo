@@ -1,3 +1,30 @@
+// TODO
+export const files: any = [
+`// fileinput.component.ts
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { browserRefresh } from '../app.component';
+
+//@ts-ignore
+import fileinput from '@uswds/uswds/js/usa-file-input';
+
+@Component({
+	selector: 'app-fileinput',
+	templateUrl: './fileinput.component.html',
+	styleUrl: './fileinput.component.less'
+})
+export class FileInputComponent implements OnInit, OnDestroy {
+	ngOnInit(): void {
+		if (!browserRefresh) {
+			fileinput.on();
+		}
+	}
+	
+	ngOnDestroy(): void {
+		fileinput.off();
+	}
+}`,
+
+`// app.component.ts
 import { Component, OnDestroy } from '@angular/core';
 import { NavigationStart, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
@@ -25,4 +52,4 @@ export class AppComponent implements OnDestroy {
 	ngOnDestroy() {
 		this.subscription.unsubscribe();
 	}
-}
+}`];

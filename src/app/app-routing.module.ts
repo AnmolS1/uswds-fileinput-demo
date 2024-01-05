@@ -1,10 +1,10 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { HomeTestComponent } from './home-test/home-test.component';
 import { FileInputComponent } from './fileinput/fileinput.component';
+import { HomeComponent } from './home/home.component';
 
 const routes: Routes = [
-	{ path: '', component: HomeTestComponent },
+	{ path: '', component: HomeComponent },
 	{ path: 'fileinput', component: FileInputComponent }
 ];
 

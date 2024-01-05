@@ -1,4 +1,58 @@
-<div class="usa-form-group">
-	<label class="usa-label" for="file-input-single">Input accepts a single file</label>
-	<input id="file-input-single" class="usa-file-input" type="file" name="file-input-single" />
+<div class="vertical-container">
+	<fieldset class="usa-fieldset">
+		<legend class="usa-legend">choose one to view the component in that scenario</legend>
+		<div class="usa-radio">
+			<input id="problem" value="problem" class="usa-radio__input" type="radio" [(ngModel)]="scenario" />
+			<label class="usa-radio__label" for="problem">problem</label>
+		</div>
+		<div class="usa-radio">
+			<input id="full-solution" value="solution" class="usa-radio__input" type="radio" [(ngModel)]="scenario" />
+			<label class="usa-radio__label" for="full-solution">full solution</label>
+		</div>
+	</fieldset>
+	
+	<br />
+	
+	<button type="button" class="usa-button" (click)="executeViewChange(true)">execute view</button>
 </div>
+
+<hr />
+
+<div class="container">
+	<div class="usa-alert usa-alert--{{ isSolution ? 'info' : 'error' }} usa-alert--slim">
+		<div class="usa-alert__body">
+			<p class="usa-alert__text" *ngIf="!isSolution">
+				The component does not load the modified HTML since the router loads assets asynchronously.
+				<a class="usa-link" href="{{ origin }}/uswds-fileinput-error-demo/fileinput">Upon refresh</a>,
+				it is clear that manually going to the route causes a synchronous asset load.
+			</p>
+			
+			<p class="usa-alert__text" *ngIf="isSolution">
+				The component now loads properly before the view loads and does not double up
+				<a class="usa-link" href="{{ origin }}/uswds-fileinput-error-demo/fileinput">on refresh</a>.
+				This is because we have checked whether the route was accessed manually or directly.
+			</p>
+		</div>
+	</div>
+</div>
+
+<div class="container">
+	<div class="usa-form-group">
+		<label class="usa-label" for="file-input">input accepts a single file</label>
+		<input id="file-input" class="usa-file-input" type="file" name="file-input" />
+	</div>
+</div>
+
+<ng-container *ngIf="isSolution">
+	<hr />
+	
+	<div class="vertical-container">
+		<div *ngFor="let code of files" class="usa-summary-box" role="region" aria-labelledby="summary-box-key-information">
+			<div class="usa-summary-box__body">
+				<div class="usa-summary-box__text">
+					<pre><code>{{ code }}</code></pre>
+				</div>
+			</div>
+		</div>
+	</div>
+</ng-container>
